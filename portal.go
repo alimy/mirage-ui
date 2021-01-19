@@ -11,14 +11,14 @@ import (
 	"github.com/alimy/embedx"
 )
 
+//go:embed portal/dist/css
+//go:embed portal/dist/js/*.js
+//go:embed portal/dist/favicon.ico
+//go:embed portal/dist/index.html
+var content embed.FS
+
 // NewFileSystem get a http.FileSystem instance
 func NewFileSystem() http.FileSystem {
-	//go:embed portal/dist/css
-	//go:embed portal/dist/js/*.js
-	//go:embed portal/dist/favicon.ico
-	//go:embed portal/dist/index.html
-	var content embed.FS
-
 	embedFS := embedx.NewFileSystem(&content, embedx.ChangeRoot("portal/dist"))
 	return http.FS(embedFS)
 }
