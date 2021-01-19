@@ -19,6 +19,6 @@ var content embed.FS
 
 // NewFileSystem get a http.FileSystem instance
 func NewFileSystem() http.FileSystem {
-	embedFS := embedx.NewFileSystem(&content, embedx.ChangeRoot("portal/dist"))
+	embedFS := embedx.ChangeRoot(content, "portal/dist")
 	return http.FS(embedFS)
 }
