@@ -1,11 +1,9 @@
 <template>
   <div class="home">
-
-
     <a-row :gutter="16">
-
       <a-col :span="6">
-        <a-statistic title="容器数" :value="info.ContainersRunning" style="margin-right: 50px">
+        <a-statistic title="容器数" :value="info.ContainersRunning"
+                     style="margin-right: 50px">
           <template #suffix>
             <span> / {{info.Containers}}</span>
           </template>
@@ -29,7 +27,8 @@
       </a-col>
 
       <a-col :span="6">
-        <a-statistic title="内存" :value="(info.MemTotal /1000000) .toFixed(2)" class="demo-class">
+        <a-statistic title="内存" :value="(info.MemTotal /1000000) .toFixed(2)"
+                     class="demo-class">
           <template #suffix>
             <span> M</span>
           </template>
@@ -74,42 +73,42 @@
 </template>
 
 <script>
-  import HelloWorld from '../components/HelloWorld.vue'
+import HelloWorld from '../components/HelloWorld.vue'
 
-  export default {
-    name: 'Home',
-    components: {
-      HelloWorld
-    }, data() {
-      return {
-        info: {
-          Containers: 0,
-          ContainersRunning: 0,
-          Images: 0,
-          NCPU: 0,
-          MemTotal: 0
-        },
-        version: {
-          Version: '',
-          GoVersion: '',
-          Arch: '',
-          KernelVersion: '',
-          Components: [],
-          Platform: {
-            Name: ""
-          }
+export default {
+  name: 'Home',
+  components: {
+    HelloWorld
+  }, data() {
+    return {
+      info: {
+        Containers: 0,
+        ContainersRunning: 0,
+        Images: 0,
+        NCPU: 0,
+        MemTotal: 0
+      },
+      version: {
+        Version: '',
+        GoVersion: '',
+        Arch: '',
+        KernelVersion: '',
+        Components: [],
+        Platform: {
+          Name: ""
         }
       }
-    }, mounted() {
-      this.$axios.get('/api/docker/info').then(res => {
-        let {Data} = res.data;
-        this.info = Data;
-      });
-
-      this.$axios.get('/api/docker/version').then(res => {
-        let {Data} = res.data;
-        this.version = Data.server;
-      });
     }
+  }, mounted() {
+    this.$axios.get('/api/docker/info').then(res => {
+      let {data} = res.data;
+      this.info = data;
+    });
+
+    this.$axios.get('/api/docker/version').then(res => {
+      let {data} = res.data;
+      this.version = data.server;
+    });
   }
+}
 </script>

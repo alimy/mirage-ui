@@ -16,7 +16,7 @@ Just a simple UI for [Mirage](https://github.com/alimy/mirage)
 ### Compiles and minifies for production
 ```
 % cd portal
-% yarn build
+% yarn build && find dist -name '*.map' -exec rm -f {} \;
 ```
 
 ### Customize configuration

@@ -42,39 +42,39 @@
     <!--      <span> 安全认证</span>-->
     <!--    </a-menu-item>-->
 
-    <a-menu-item key="/setting">
-      <a-icon type="setting"/>
-      <span class="menuItem"> 系统设置</span>
-    </a-menu-item>
+    <!--    <a-menu-item key="/setting">-->
+    <!--      <a-icon type="setting"/>-->
+    <!--      <span class="menuItem"> 系统设置</span>-->
+    <!--    </a-menu-item>-->
   </a-menu>
 </template>
 
 <script>
-  import {mapMutations} from "vuex";
+import {mapMutations} from "vuex";
 
-  export default {
-    name: "PCMenu",
-    computed: {
-      currentMenuKey: function () {
-        return this.$store.state.menu.currentMenuKey;
-      }
-    },
-    methods: {
-      ...mapMutations({
-        setCurrentMenuKey: 'setCurrentMenuKey'
-      }),
-      selectItem: function ({key}) {
-        this.$router.push(key)
-        this.setCurrentMenuKey(key)
-      }
+export default {
+  name: "PCMenu",
+  computed: {
+    currentMenuKey: function () {
+      return this.$store.state.menu.currentMenuKey;
+    }
+  },
+  methods: {
+    ...mapMutations({
+      setCurrentMenuKey: 'setCurrentMenuKey'
+    }),
+    selectItem: function ({key}) {
+      this.$router.push(key)
+      this.setCurrentMenuKey(key)
     }
   }
+}
 </script>
 
 <style>
-  .menuItem {
-    color: #000c17;
-  }
+.menuItem {
+  color: #000c17;
+}
 </style>
 
 

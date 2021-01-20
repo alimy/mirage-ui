@@ -10,11 +10,11 @@ import networkStore from './NetworkStore'
 import volumeStore from './VolumeStore'
 
 export default new Vuex.Store({
-  modules: {
-    image: imageStore,
-    container: ContainerStore,
-    menu: menuStore,
-    network: networkStore,
-    volume: volumeStore
-  }
+    modules: {
+        image: imageStore,
+        container: ContainerStore,
+        menu: menuStore,
+        network: networkStore,
+        volume: volumeStore
+    }
 });

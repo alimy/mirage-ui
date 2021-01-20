@@ -2,14 +2,15 @@
   <a-layout id="components-layout-demo-top-side-2">
     <a-layout-header class="header">
       <!--      <div class="logo"></div>-->
-      <h1 class="logo" style="color: white">SimpleDocker</h1>
+      <h1 class="logo" style="color: white">Mirage-幻影</h1>
       <a-menu
           theme="dark"
           mode="horizontal"
           :selectable="false"
           @click="linkSelect"
           :style="{ lineHeight: '64px' }">
-        <a-menu-item :class="{'apiStateNormal': apiState,'apiStateError':!apiState}">
+        <a-menu-item key="/"
+                     :class="{'apiStateNormal': apiState,'apiStateError':!apiState}">
           <template v-if="apiState">
             <a-icon type="api" size="16"/>
             <span>连接正常</span>
@@ -21,15 +22,16 @@
         </a-menu-item>
 
 
-        <a-menu-item key="https://www.zhoutao123.com" class="right">
+        <a-menu-item key="https://alimy.me" class="right">
           <a-icon type="book" theme="filled"/>
           博客
         </a-menu-item>
-        <a-menu-item key="https://github.com/taoes/SimpleDocker" class="right">
+        <a-menu-item key="https://github.com/alimy/mirage" class="right">
           <a-icon type="code" theme="filled"/>
           源码
         </a-menu-item>
-        <a-menu-item key="https://github.com/taoes/SimpleDocker/issues/new" class="right">
+        <a-menu-item key="https://github.com/alimy/mirage/issues/new"
+                     class="right">
           <a-icon type="bug" theme="filled"/>
           反馈
         </a-menu-item>
@@ -51,67 +53,66 @@
   </a-layout>
 </template>
 <script>
-  import PCMenu from "./components/PCMenu";
+import PCMenu from "./components/PCMenu";
 
-  export default {
-    components: {PCMenu},
-    data() {
-      return {
-        collapsed: false,
-        apiState: true
-      };
-    }, mounted() {
-      setInterval(this.updateApiState, 5000);
-    }, methods: {
-      updateApiState: function () {
-        this.$axios.get('/api/docker/ping').then((res) => {
-          let {Code} = res.data;
-          this.apiState = Code === 'OK';
-        }).catch(() => {
-          this.apiState = false;
-        });
-      },
-      linkSelect: function ({key}) {
-        window.open(key, '_target')
-      }
+export default {
+  components: {PCMenu},
+  data() {
+    return {
+      collapsed: false,
+      apiState: true
+    };
+  }, mounted() {
+    setInterval(this.updateApiState, 5000);
+  }, methods: {
+    updateApiState: function () {
+      this.$axios.get('/api/docker/ping').then((res) => {
+        let {code} = res.data;
+        this.apiState = code === 'OK';
+      }).catch(() => {
+        this.apiState = false;
+      });
+    },
+    linkSelect: function ({key}) {
+      window.open(key, '_target')
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
-  .ant-layout {
-    height: 100%;
-  }
+.ant-layout {
+  height: 100%;
+}
 
-  #components-layout-demo-top-side-2 .logo {
-    width: 120px;
-    height: 31px;
+#components-layout-demo-top-side-2 .logo {
+  width: 128px;
+  height: 31px;
 
-    float: left;
-  }
+  float: left;
+}
 
-  .layoutContent {
-    background: #fff;
-    padding: 24px;
-    margin: 0;
-    minHeight: '280px';
-  }
+.layoutContent {
+  background: #fff;
+  padding: 24px;
+  margin: 0;
+  minHeight: '280px';
+}
 
-  .right {
-    float: right;
-  }
+.right {
+  float: right;
+}
 
-  .apiStateNormal {
-    float: right;
-    color: green !important;;
-    font-weight: bold
-  }
+.apiStateNormal {
+  float: right;
+  color: green !important;;
+  font-weight: bold
+}
 
-  .apiStateError {
-    float: right;
-    color: red !important;
-    font-weight: bold
-  }
-
+.apiStateError {
+  float: right;
+  color: red !important;
+  font-weight: bold
+}
 
 </style>

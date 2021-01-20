@@ -17,13 +17,13 @@ Vue.use(Antd);
 
 // 自定义指令
 Vue.directive('focus', {
-  inserted: function (el) {
-    el.querySelector("input").focus()
-  }
+    inserted: function (el) {
+        el.querySelector("input").focus()
+    }
 })
 
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app');

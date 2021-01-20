@@ -25,7 +25,8 @@
       </a-form-item>
     </a-form>
 
-    <a-table :columns="columns" :data-source="networkList" style="margin-top: 30px">
+    <a-table :columns="columns" :data-source="networkList"
+             style="margin-top: 30px">
     <span slot="action" slot-scope="text, record">
       <a-space>
         <a @click="openNetworkDetail(record.LongId)">详情</a>
@@ -124,7 +125,8 @@
     </a-modal>
 
 
-    <a-modal v-model="showNewNetworkModal" title="创建新的网络" okText="创建" cancelText="取消"
+    <a-modal v-model="showNewNetworkModal" title="创建新的网络" okText="创建"
+             cancelText="取消"
              @ok="callCreateNewNetworkApi">
       <a-form-model :form="newNetwork">
         <a-form-model-item label="网络名称">
@@ -149,158 +151,157 @@
   </div>
 </template>
 <script>
-  import {mapActions} from "vuex";
-  import {guid} from '../utils/index'
+import {mapActions} from "vuex";
+import {guid} from '../utils/index'
 
-  const columns = [
-    {
-      title: '网络ID',
-      key: 'Id',
-      dataIndex: 'Id',
-    },
-    {
-      title: '网络名称',
-      dataIndex: 'Name',
-      key: 'Name',
-    },
+const columns = [
+  {
+    title: '网络ID',
+    key: 'Id',
+    dataIndex: 'Id',
+  },
+  {
+    title: '网络名称',
+    dataIndex: 'Name',
+    key: 'Name',
+  },
 
-    {
-      title: '网络模式',
-      dataIndex: 'Driver',
-      key: 'Driver',
-    },
-    {
-      title: '作用范围',
-      dataIndex: 'Scope',
-      key: 'Scope',
-    },
-    {
-      title: '创建时间',
-      key: 'Created',
-      dataIndex: 'Created'
-    },
-    {
-      title: '操作',
-      key: 'action',
-      scopedSlots: {customRender: 'action'},
-    },
-  ];
+  {
+    title: '网络模式',
+    dataIndex: 'Driver',
+    key: 'Driver',
+  },
+  {
+    title: '作用范围',
+    dataIndex: 'Scope',
+    key: 'Scope',
+  },
+  {
+    title: '创建时间',
+    key: 'Created',
+    dataIndex: 'Created'
+  },
+  {
+    title: '操作',
+    key: 'action',
+    scopedSlots: {customRender: 'action'},
+  },
+];
 
-  export default {
-    data() {
-      return {
-        form: {},
-        showNewNetworkModal: false,
-        showNetworkDrawer: false,
-        showRemoveNetworkModal: false,
-        showRemoveVisible: false,
-        currentNetworkId: '',
-        searchKey: '',
-        columns,
-        networkDriverList: ['bridge', 'overlay', 'host'],
-        newNetwork: {name: '', driver: ''},
-        remove: {volume: true, link: false, force: true}
-      };
-    }, computed: {
-      networkList() {
-        let allNetwork = this.$store.state.network.list;
-        if (this.searchKey !== '' && this.searchKey.trim() !== '') {
-          return allNetwork
-        }
-        return allNetwork;
-      }, networkInfo() {
-        return this.$store.state.network.info;
-      }, IPConfig() {
-        let info = this.$store.state.network.info;
-        return this.$lodash.get(info, 'IPAM.Config', [])
-      }, containerList() {
-        let info = this.$store.state.network.info;
-        return this.$lodash.get(info, 'Containers', {})
+export default {
+  data() {
+    return {
+      form: {},
+      showNewNetworkModal: false,
+      showNetworkDrawer: false,
+      showRemoveNetworkModal: false,
+      showRemoveVisible: false,
+      currentNetworkId: '',
+      searchKey: '',
+      columns,
+      networkDriverList: ['bridge', 'overlay', 'host'],
+      newNetwork: {name: '', driver: ''},
+      remove: {volume: true, link: false, force: true}
+    };
+  }, computed: {
+    networkList() {
+      let allNetwork = this.$store.state.network.list;
+      if (this.searchKey !== '' && this.searchKey.trim() !== '') {
+        return allNetwork
       }
-    },
-    mounted() {
-      this.updateNetworkList()
-    },
-    methods: {
-      ...mapActions({
-        updateNetworkList: 'updateNetworkList',
-        updateNetworkInfo: 'updateNetworkInfo'
-      }), openNetworkDetail: function (networkId) {
-        this.showNetworkDrawer = true
-        this.currentNetworkId = networkId
-        this.updateNetworkInfo(networkId)
-      }, openRemoveNetworkModal: function (networkId) {
-        this.showRemoveNetworkModal = true
-        this.currentNetworkId = networkId
-      }, reloadNetworkList() {
-        this.updateNetworkInfo()
-        this.$message.info({content: '刷新网络列表完成'});
-      }, callRemoveNetworkApi() {
-        let key = guid()
-        this.$message.loading({content: "正在移除网络, 请稍后...", key, duration: 10});
-        this.$axios.get(`/api/network/${this.currentNetworkId}/delete`).then(res => {
-          let {Code, Msg} = res.data;
-          if (Code === 'OK') {
-            this.$message.info({content: '移除网络完成', key});
-            this.showRemoveNetworkModal = false;
-            this.updateNetworkList()
-          } else {
-            this.$message.info({content: Msg, key});
-          }
-        }).catch(e => {
-          this.$message.info({content: '服务连接失败，请检查服务是否正常启动', key});
-        })
-      }, callCreateNewNetworkApi() {
-        if (this.newNetwork.name === '') {
-          this.$message.warning("网络名称不能为空");
-          return
-        }
-        let key = guid()
-        this.$message.loading({content: "正在创建网络, 请稍后...", key, duration: 10});
-        this.$axios.get(`/api/network/new`, {params: this.newNetwork}).then(res => {
-          let {Code, Msg} = res.data;
-          if (Code === 'OK') {
-            this.$message.info({content: '创建网络完成', key});
-            this.showNewNetworkModal = false;
-            this.updateNetworkList()
-          } else {
-            this.$message.warning({content: Msg, key});
-          }
-        }).catch(e => {
-          this.$message.error({content: '服务连接失败，请检查服务是否正常启动', key});
-        })
-
-      }
+      return allNetwork;
+    }, networkInfo() {
+      return this.$store.state.network.info;
+    }, IPConfig() {
+      let info = this.$store.state.network.info;
+      return this.$lodash.get(info, 'IPAM.Config', [])
+    }, containerList() {
+      let info = this.$store.state.network.info;
+      return this.$lodash.get(info, 'Containers', {})
     }
-  };
+  },
+  mounted() {
+    this.updateNetworkList()
+  },
+  methods: {
+    ...mapActions({
+      updateNetworkList: 'updateNetworkList',
+      updateNetworkInfo: 'updateNetworkInfo'
+    }), openNetworkDetail: function (networkId) {
+      this.showNetworkDrawer = true
+      this.currentNetworkId = networkId
+      this.updateNetworkInfo(networkId)
+    }, openRemoveNetworkModal: function (networkId) {
+      this.showRemoveNetworkModal = true
+      this.currentNetworkId = networkId
+    }, reloadNetworkList() {
+      this.updateNetworkInfo()
+      this.$message.info({content: '刷新网络列表完成'});
+    }, callRemoveNetworkApi() {
+      let key = guid()
+      this.$message.loading({content: "正在移除网络, 请稍后...", key, duration: 10});
+      this.$axios.get(`/api/network/delete/${this.currentNetworkId}`).then(res => {
+        let {code, msg} = res.data;
+        if (code === 'OK') {
+          this.$message.info({content: '移除网络完成', key});
+          this.showRemoveNetworkModal = false;
+          this.updateNetworkList()
+        } else {
+          this.$message.info({content: msg, key});
+        }
+      }).catch(e => {
+        this.$message.info({content: '服务连接失败，请检查服务是否正常启动', key});
+      })
+    }, callCreateNewNetworkApi() {
+      if (this.newNetwork.name === '') {
+        this.$message.warning("网络名称不能为空");
+        return
+      }
+      let key = guid()
+      this.$message.loading({content: "正在创建网络, 请稍后...", key, duration: 10});
+      this.$axios.get(`/api/network/new`, {params: this.newNetwork}).then(res => {
+        let {code, msg} = res.data;
+        if (code === 'OK') {
+          this.$message.info({content: '创建网络完成', key});
+          this.showNewNetworkModal = false;
+          this.updateNetworkList()
+        } else {
+          this.$message.warning({content: msg, key});
+        }
+      }).catch(e => {
+        this.$message.error({content: '服务连接失败，请检查服务是否正常启动', key});
+      })
+    }
+  }
+};
 </script>
 
 <style scoped>
-  .ant-drawer-body {
-    padding: 0 !important;
-  }
+.ant-drawer-body {
+  padding: 0 !important;
+}
 
-  .configTable, .configTable tr th, .configTable tr td {
-    border: 1px solid lightgrey;
-  }
+.configTable, .configTable tr th, .configTable tr td {
+  border: 1px solid lightgrey;
+}
 
-  .configTable .tagTd {
-    width: 100px;
-  }
+.configTable .tagTd {
+  width: 100px;
+}
 
-  .configTable {
-    width: 100%;
-    margin-top: 20px;
-    text-align: center;
-    border-collapse: collapse;
-  }
+.configTable {
+  width: 100%;
+  margin-top: 20px;
+  text-align: center;
+  border-collapse: collapse;
+}
 
-  .contentTd {
-    overflow-wrap: anywhere;
-    padding: 5px 0 5px 10px;
-  }
+.contentTd {
+  overflow-wrap: anywhere;
+  padding: 5px 0 5px 10px;
+}
 
-  .detailTitle {
-    margin-top: 10px;
-  }
+.detailTitle {
+  margin-top: 10px;
+}
 </style>
