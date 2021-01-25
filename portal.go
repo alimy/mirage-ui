@@ -6,9 +6,9 @@ package ui
 
 import (
 	"embed"
+	"io/fs"
+	"log"
 	"net/http"
-
-	"github.com/alimy/embedx"
 )
 
 //go:embed portal/dist/css
@@ -19,6 +19,9 @@ var content embed.FS
 
 // NewFileSystem get a http.FileSystem instance
 func NewFileSystem() http.FileSystem {
-	embedFS := embedx.ChangeRoot(content, "portal/dist")
+	embedFS, err := fs.Sub(content, "portal/dist")
+	if err != nil {
+		log.Fatal(err)
+	}
 	return http.FS(embedFS)
 }
